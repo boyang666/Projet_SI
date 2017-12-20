@@ -1,2 +1,2 @@
 # Projet_SI
-PyQt
+An application to detect the movement of a chicken. Tech:Python, PyQt5, opencv.
