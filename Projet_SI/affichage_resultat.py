@@ -33,7 +33,7 @@ class affichage_graphique:
 
     # Gère l'événement du click de souris
     def __onclick(self, event):
-        x = int(event.xdata)
+        x = int(float(event.xdata))
 
         subplot2 = self.fig.add_subplot(self.gs[1, 0])
         plt.title("Image correspondante :")

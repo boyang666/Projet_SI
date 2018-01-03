@@ -3,7 +3,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 import os
 from ZoneInteret import *
-from Fen_SelectZI import Fen_selectZI
 from PIL import Image
 import cv2
 import numpy as np

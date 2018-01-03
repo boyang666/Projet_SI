@@ -36,9 +36,9 @@ class RemoveOperator:
             sumGray2 += sum(gray2[i])
 
         if (sumGray1 >= sumGray2):
-            percente = (sumGray1 - sumGray2) * 10000 / sumGray1
+            percente = (sumGray1 - sumGray2) / sumGray1 * 10000
         else:
-            percente = (sumGray2 - sumGray1) * 10000 / sumGray1
+            percente = (sumGray2 - sumGray1) / sumGray1 * 10000
         if percente > 400:
             percente = 400
 
