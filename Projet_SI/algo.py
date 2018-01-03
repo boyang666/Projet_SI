@@ -8,7 +8,7 @@ class algorithme():
 
 	#doit retourner une liste
 	@abstractmethod
-	def traiterVideo(self,video):
+	def traiterVideo(self,video,start_frame):
 		pass
 
 	@abstractmethod

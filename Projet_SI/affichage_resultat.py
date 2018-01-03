@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 import time
 
-# Gère l'affichage du graphique
+# Gère l'affichage du resultat
 class affichage_graphique:
     def __init__(self, video, start_frame):
         self.fig = plt.figure(figsize=(10, 8), dpi=80)
@@ -37,6 +37,7 @@ class affichage_graphique:
 
         subplot2 = self.fig.add_subplot(self.gs[1, 0])
         plt.title("Image correspondante :")
+        #print(len(self.frame_list))
         plt.imshow(cv2.cvtColor(self.frame_list[x], cv2.COLOR_BGR2RGB))
         plt.axis("off")
         self.fig.canvas.draw()

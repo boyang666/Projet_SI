@@ -25,7 +25,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>511</width>
+      <width>518</width>
       <height>841</height>
      </rect>
     </property>
@@ -114,35 +114,6 @@
        <property name="rightMargin">
         <number>10</number>
        </property>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_zi">
-         <property name="text">
-          <string>Zone d'interêt:       </string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="comboBox_zone">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <item>
-          <property name="text">
-           <string>Sélectionner une zone d'interêt</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Consulter une zone d'interêt</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Supprimer une zone d'interêt</string>
-          </property>
-         </item>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_etape2">
          <property name="styleSheet">
@@ -154,12 +125,30 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="pushButton_zi">
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(0, 170, 255);</string>
-         </property>
+        <widget class="QPushButton" name="pushButton_consulter">
          <property name="text">
-          <string>Valider</string>
+          <string>Consulter la zone d'interêt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton_select">
+         <property name="text">
+          <string>Séléctionner une zone d'interêt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_zi">
+         <property name="text">
+          <string>Zone d'interêt:       </string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="pushButton_supprimer">
+         <property name="text">
+          <string>Supprimer la zone d'interêt</string>
          </property>
         </widget>
        </item>
@@ -244,44 +233,24 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_couleur_operateur">
+       <item row="3" column="1">
+        <widget class="QRadioButton" name="radioButtonOui">
          <property name="text">
-          <string>Couleur de blouse:    </string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="pushButton_choisir_couleur">
-         <property name="text">
-          <string>Couleur</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_couleur_afficher">
-         <property name="text">
-          <string>Couleur Choisie :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_couleur_choisie">
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 255, 255);</string>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
+          <string>Oui</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QPushButton" name="pushButton_valider_couleur">
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(0, 170, 255);</string>
-         </property>
+        <widget class="QRadioButton" name="radioButtonNon">
          <property name="text">
-          <string>Valider</string>
+          <string>Non</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Détecter opérateur:   </string>
          </property>
         </widget>
        </item>
@@ -327,10 +296,10 @@
    <widget class="QFrame" name="zone_frame">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>540</x>
       <y>40</y>
-      <width>391</width>
-      <height>241</height>
+      <width>491</width>
+      <height>341</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -344,37 +313,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>391</width>
-       <height>241</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QFrame" name="couleur_frame">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>360</y>
-      <width>401</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QLabel" name="label_valider_operateur">
-     <property name="geometry">
-      <rect>
-       <x>1</x>
-       <y>4</y>
-       <width>391</width>
-       <height>231</height>
+       <width>491</width>
+       <height>341</height>
       </rect>
      </property>
      <property name="text">
@@ -385,27 +325,14 @@
    <widget class="QLabel" name="label_zone">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>20</y>
+      <x>530</x>
+      <y>10</y>
       <width>121</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>Zone d'interêt:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_couleur">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>330</y>
-      <width>181</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Validation de couleur:</string>
     </property>
    </widget>
    <widget class="Line" name="line_middle">
@@ -419,19 +346,6 @@
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_zone">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>300</y>
-      <width>581</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
    <widget class="Line" name="line_bas">
@@ -451,7 +365,7 @@
     <property name="geometry">
      <rect>
       <x>510</x>
-      <y>620</y>
+      <y>390</y>
       <width>561</width>
       <height>16</height>
      </rect>
@@ -464,9 +378,9 @@
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>670</y>
+      <y>450</y>
       <width>511</width>
-      <height>151</height>
+      <height>371</height>
      </rect>
     </property>
    </widget>
@@ -474,7 +388,7 @@
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>640</y>
+      <y>420</y>
       <width>191</width>
       <height>16</height>
      </rect>

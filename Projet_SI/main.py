@@ -8,5 +8,10 @@ if __name__ == '__main__':
     #ui = Fen_principale_design.Ui_MainWindow()
     #ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
+
+    try:
+        sys.exit(app.exec_())
+    except:
+        sys.exit(0)
+
 

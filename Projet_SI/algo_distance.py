@@ -7,7 +7,7 @@ import cv2
 import sys
 import numpy as np
 import ZoneInteret as zi
-import detection_operateur as do
+
 
 
 class algo_distance(algo.algorithme):  # hérite de la classe algo

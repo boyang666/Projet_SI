@@ -7,22 +7,25 @@ from Fen_SelectZI import Fen_selectZI
 from PIL import Image
 import cv2
 import numpy as np
-import affichage_graphique
+import affichage_resultat
 import threading
 import subprocess
 import algo_distance
 import algo_flots_optiques
-
+import remove_operateur
+import time
 
 def lancer_video(video):
     subprocess.Popen([os.path.join("vlc"), os.path.join(video)])
 
 def thread(video, unAlgo, frame):
-     ma_liste = unAlgo.traiterVideo(video, frame)
-     pomme = affichage_graphique.affichage_graphique(video, frame)
-     #thread_video = threading.Thread(None, lancer_video, None,(), kwargs={'video': video})
-     #thread_video.start()
-     pomme.afficher(ma_liste)
+
+    ma_liste = unAlgo.traiterVideo(video, frame)
+    pomme = affichage_resultat.affichage_graphique(video, frame)
+    #thread_video = threading.Thread(None, lancer_video, None,(), kwargs={'video': video})
+    #thread_video.start()
+    pomme.afficher(ma_liste)
+
 
 class Fen_principale(QtWidgets.QMainWindow, Fen_principale_design.Ui_MainWindow):
     def __init__(self):
@@ -33,11 +36,22 @@ class Fen_principale(QtWidgets.QMainWindow, Fen_principale_design.Ui_MainWindow)
         self.start_frame = 3
 
         self.setupUi(self)
+        self.group = QtWidgets.QButtonGroup()
+        self.group.addButton(self.radioButtonOui)
+        self.group.addButton(self.radioButtonNon)
+        self.group.setId(self.radioButtonOui, 0)
+        self.group.setId(self.radioButtonNon, 1)
+        self.radioButtonNon.setChecked(True)
+
+        self.plainTextEdit_histoire.setReadOnly(True)
         self.pushButton_parcourir.clicked.connect(self.parcourir_clicked)
-        self.pushButton_choisir_couleur.clicked.connect(self.couleur_choisir_clicked)
-        self.pushButton_zi.clicked.connect(self.zone_interet_clicked)
-        self.couleur_name = "#000000"
+        #self.pushButton_choisir_couleur.clicked.connect(self.couleur_choisir_clicked)
+        #self.pushButton_zi.clicked.connect(self.zone_interet_clicked)
+        #self.couleur_name = "#000000"
         #self.pushButton_valider_couleur.clicked.connect(self.on_btn_operator_clicked)
+        self.pushButton_select.clicked.connect(self.zone_interet_select)
+        self.pushButton_consulter.clicked.connect(self.zone_interet_consulter)
+        self.pushButton_supprimer.clicked.connect(self.zone_interet_supprimer)
         self.pushButton_lancer.clicked.connect(self.on_myButton_clicked)
 
     def parcourir_clicked(self):
@@ -50,11 +64,52 @@ class Fen_principale(QtWidgets.QMainWindow, Fen_principale_design.Ui_MainWindow)
             self.couleur_name = couleur.name()
             self.lineEdit_couleur_choisie.setStyleSheet('QWidget {background-color:%s}'%self.couleur_name)
 
+    def zone_interet_select(self):
+        # self.fen_selectZI = Fen_selectZI(self.lineEdit_path.text())
+        # self.fen_selectZI.show()
+        if(os.path.exists(self.lineEdit_path.text())):
+            zi = ZoneInteret(self.lineEdit_path.text())
+            if ZoneInteret.verifier_presence_fichier_ini() and zi.flag:
+                img = Image.open('zi/image_zone_interet.png')
+                img_resize = img.resize((self.label_zi_img.width(), self.label_zi_img.height()))
+                img_resize.save('zi/image_zone_interet_temp.png')
+                pixmap = QtGui.QPixmap('zi/image_zone_interet_temp.png')
+                self.label_zi_img.setPixmap(pixmap)
+                os.remove('zi/image_zone_interet_temp.png')
+        else:
+            QMessageBox.warning(self, "Erreur", "Impossible de trouver la video",
+                                QMessageBox.Ok)
+        # zi.get_one_image_from_video(self.lineEdit_path.text())
+
+
+    def zone_interet_consulter(self):
+        # Presence du fichier "param.ini"
+        if ZoneInteret.verifier_presence_fichier_ini():
+            img = Image.open('zi/image_zone_interet.png')
+            img_resize = img.resize((self.label_zi_img.width(), self.label_zi_img.height()))
+            img_resize.save('zi/image_zone_interet_temp.png')
+            pixmap = QtGui.QPixmap('zi/image_zone_interet_temp.png')
+            self.label_zi_img.setPixmap(pixmap)
+            os.remove('zi/image_zone_interet_temp.png')
+        else:
+            QMessageBox.warning(self, "Erreur", "Impossible de trouver les fichiers dans le repertoire /zi",
+                                QMessageBox.Ok)
+
+    def zone_interet_supprimer(self):
+        button = QMessageBox.question(self, "Question",
+                                      "Etes-vous sûr de vouloir supprimer la Zone d'intérêt actuelle ？",
+                                      QMessageBox.Ok | QMessageBox.Cancel, QMessageBox.Ok)
+        if button == QMessageBox.Ok:
+            ZoneInteret.supprimer_ZI(self)
+            self.label_zi_img.clear()
+
     def zone_interet_clicked(self):
         choix = self.comboBox_zone.currentIndex()
         if choix == 0:
-            self.fen_selectZI = Fen_selectZI(self.lineEdit_path.text())
-            self.fen_selectZI.show()
+            #self.fen_selectZI = Fen_selectZI(self.lineEdit_path.text())
+            #self.fen_selectZI.show()
+            zi = ZoneInteret(self.lineEdit_path.text())
+            #zi.get_one_image_from_video(self.lineEdit_path.text())
             if ZoneInteret.verifier_presence_fichier_ini():
                 img = Image.open('zi/image_zone_interet.png')
                 img_resize = img.resize((self.label_zi_img.width(), self.label_zi_img.height()))
@@ -165,31 +220,62 @@ class Fen_principale(QtWidgets.QMainWindow, Fen_principale_design.Ui_MainWindow)
 
     # Gère l'appui du bouton pour lancer le traitement
     def on_myButton_clicked(self):
+        #self.plainTextEdit_histoire.clear()
+
         # Choix de l'algorithme
         self.plainTextEdit_histoire.setPlainText("")
         algo = self.comboBox_algo.currentIndex() + 1
         video_name = self.lineEdit_path.text()
+
+        if (self.group.checkedId() == 0):
+            #self.plainTextEdit_histoire.insertPlainText("\n" + "Suppression de l'opérateur de la vidéo...")
+            self.plainTextEdit_histoire.appendPlainText("Suppression de l'opérateur de la vidéo...")
+            QApplication.processEvents()
+            try:
+                removeObject = remove_operateur.RemoveOperator()
+                video_name = removeObject.remove_operator(video_name)
+
+                #self.plainTextEdit_histoire.insertPlainText("\n" + "Suppression terminé...")
+                self.plainTextEdit_histoire.appendPlainText("Suppression terminé...")
+                QApplication.processEvents()
+                time.sleep(2)
+            except:
+                QMessageBox.warning(self, "Erreur", "Erreurs lors de suppression de l'opérateur",
+                                    QMessageBox.Ok)
+
+
         # Si la vidéo existe, on lance un autre thread en exécutant le bon algo
         if (os.path.exists(video_name)):
             #self.spinner.start()
-            self.plainTextEdit_histoire.insertPlainText("\n" + "Suppression de l'opérateur de la vidéo...")
-
-            self.plainTextEdit_histoire.insertPlainText("\n" + "Suppression terminé...")
 
             # Algorithme Distance
             if (algo == 1):
                 self.plainTextEdit_histoire.insertPlainText("\n" + "Application de l'algorithme Distances...")
-                a = threading.Thread(None, thread, None, (),
-                                     {'video': video_name, 'unAlgo': algo_distance.algo_distance(),
-                                      'frame': self.start_frame})
-                a.start()
+                try:
+                    a = threading.Thread(None, thread, None, (),
+                                         {'video': video_name, 'unAlgo': algo_distance.algo_distance(),
+                                          'frame': self.start_frame})
+                    a.start()
+                except:
+                    QMessageBox.warning(self, "Erreur", "Erreurs lors de l'exécution",
+                                        QMessageBox.Ok)
+                #self.plainTextEdit_histoire.insertPlainText("\n" + "Traitement terminé...")
+                self.plainTextEdit_histoire.insertPlainText("\n" + "Le résultat est enregistré dans le répertoire /resultats sous format PDF.")
                 # Algorithme flotsoptiques
+
             elif (algo == 2):
                 self.plainTextEdit_histoire.insertPlainText("\n" + "Application de l'algorithme flots optiques...")
-                a = threading.Thread(None, thread, None, (), {'video': video_name,
-                                                              'unAlgo': algo_flots_optiques.algo_flots_optiques(),
-                                                              'frame': self.start_frame})
-                a.start()
+                try:
+                    a = threading.Thread(None, thread, None, (), {'video': video_name,
+                                                                  'unAlgo': algo_flots_optiques.flot_optiques(),
+                                                                  'frame': self.start_frame})
+                    a.start()
+                except:
+                    QMessageBox.warning(self, "Erreur", "Erreurs lors de l'exécution",
+                                        QMessageBox.Ok)
+                #self.plainTextEdit_histoire.insertPlainText("\n" + "Traitement terminé...")
+                self.plainTextEdit_histoire.insertPlainText(
+                    "\n" + "Le résultat est enregistré dans le répertoire /resultats sous format PDF.")
             #self.spinner.stop()
         else:
             print("no video")

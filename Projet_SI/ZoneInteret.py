@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import os.path
+import cv2
+from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.patches import Rectangle
@@ -27,7 +29,11 @@ class ZoneInteret:
                                 QMessageBox.Ok)
 
     # Initialise les variables nécessaires à l'affichage de l'image et aux événements
-    def __init__(self):
+    def __init__(self, video):
+
+        self.flag = False
+        self.get_one_image_from_video(video)
+
         # On se sert de l'image extraite précédemment
         self.img = mpimg.imread('./zi/image_modele.png')
 
@@ -56,6 +62,8 @@ class ZoneInteret:
         # Affichage de l'image dans la fenêtre
         self.imgplot = plt.imshow(self.img)
 
+        self.show_window()
+
     # Un click gauche -> sauvegarde des coordonnées du pointeur
     def on_mouseclick_press(self, event):
         self.x0 = event.xdata
@@ -73,6 +81,7 @@ class ZoneInteret:
     # Si la touche "enter" est appuyée, on sauvegarde la zone d'intérêt
     def on_keyboard_press(self, event):
         if event.key == 'enter':
+            self.flag = True
             with open("./zi/param.ini", "w") as file:
                 file.write(str(int(self.rect.get_x())) + ",")
                 file.write(str(int(self.rect.get_y())) + ",")
@@ -91,7 +100,16 @@ class ZoneInteret:
         plt.title("Selectionner la zone interet avec la souris. Appuyez sur entrer pour valider.")
         plt.show()
 
-
+    # extrait une image de la vidéo selectionnée
+    def get_one_image_from_video(self, video):
+        video_capture = cv2.VideoCapture(video)
+        # TODO : bien récupérer la dernière frame
+        nb_frame = video_capture.get(cv2.CAP_PROP_FRAME_COUNT)
+        video_capture.set(cv2.CAP_PROP_FRAME_COUNT, int(nb_frame - 1))
+        success, self.image = video_capture.read()
+        print(success)
+        cv2.imwrite("zi/image_modele.png", self.image)
+        #self.show_window()
 
 
 
