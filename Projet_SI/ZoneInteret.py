@@ -1,20 +1,36 @@
 # -*- coding: utf-8 -*-
 import os.path
 import cv2
-from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.patches import Rectangle
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 
 class ZoneInteret:
+
+    """
+    Cette classe permet de gérer les information de zone interet
+    Une zone interet est un cadre d'image sur l'image entière.
+    On se concentre sur cette zone interet pour faire le traitement.
+    C'est une manière de réduire le bruit sur le résultat de traitement
+    @version 2.0
+    """
+
     @staticmethod
     def verifier_presence_fichier_ini():
+        """
+        Vérifier si les fichiers de zone interet sont déjà présents dans le dossier
+        :return: true si présent, false sinon
+        """
         return os.path.isfile('./zi/param.ini')
 
     @staticmethod
     def supprimer_ZI(window):
+        """
+        La méthode pour gérer la suppresion de zone interet
+        :param window: le fenetre principale
+        :return:
+        """
         if os.path.isfile('./zi/param.ini'):
             try:
                 os.remove("./zi/param.ini")
@@ -28,9 +44,12 @@ class ZoneInteret:
             QMessageBox.warning(window, "Erreur", "Impossible de trouver les fichiers dans le repertoire /zi",
                                 QMessageBox.Ok)
 
-    # Initialise les variables nécessaires à l'affichage de l'image et aux événements
-    def __init__(self, video):
 
+    def __init__(self, video):
+        """
+        Initialise les variables nécessaires à l'affichage de l'image et aux événements
+        :param video: la vidéo à traiter
+        """
         self.flag = False
         self.get_one_image_from_video(video)
 
@@ -64,13 +83,22 @@ class ZoneInteret:
 
         self.show_window()
 
-    # Un click gauche -> sauvegarde des coordonnées du pointeur
     def on_mouseclick_press(self, event):
+        """
+        Un click gauche -> sauvegarde des coordonnées du pointeur
+        :param event: évènement de clique
+        :return:
+        """
         self.x0 = event.xdata
         self.y0 = event.ydata
 
-    # Click gauche relâché -> dessin du rectangle
+
     def on_mouseclick_release(self, event):
+        """
+        Click gauche relâché -> dessin du rectangle
+        :param event: évènement de souris
+        :return:
+        """
         self.x1 = event.xdata
         self.y1 = event.ydata
         self.rect.set_width(self.x1 - self.x0)
@@ -78,8 +106,13 @@ class ZoneInteret:
         self.rect.set_xy((self.x0, self.y0))
         self.ax.figure.canvas.draw()
 
-    # Si la touche "enter" est appuyée, on sauvegarde la zone d'intérêt
+
     def on_keyboard_press(self, event):
+        """
+        Si la touche "enter" est appuyée, on sauvegarde la zone d'intérêt
+        :param event: évenenment de keyboard
+        :return:
+        """
         if event.key == 'enter':
             self.flag = True
             with open("./zi/param.ini", "w") as file:
@@ -97,19 +130,26 @@ class ZoneInteret:
 
 
     def show_window(self):
+        """
+        Pour afficher la fenêtre qui est utilisée pour choisir une zone interet
+        :return:
+        """
         plt.title("Selectionner la zone interet avec la souris. Appuyez sur entrer pour valider.")
         plt.show()
 
-    # extrait une image de la vidéo selectionnée
     def get_one_image_from_video(self, video):
+        """
+        Extrait une image de la vidéo selectionnée
+        Cette image est utilisée pour choisir une zone interet
+        :param video: la vidéo choisie
+        :return:
+        """
         video_capture = cv2.VideoCapture(video)
-        # TODO : bien récupérer la dernière frame
         nb_frame = video_capture.get(cv2.CAP_PROP_FRAME_COUNT)
         video_capture.set(cv2.CAP_PROP_FRAME_COUNT, int(nb_frame - 1))
         success, self.image = video_capture.read()
-        print(success)
+        #sauvegarder l'image
         cv2.imwrite("zi/image_modele.png", self.image)
-        #self.show_window()
 
 
 

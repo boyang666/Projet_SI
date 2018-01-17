@@ -4,13 +4,20 @@
 import algo
 import os.path
 import cv2
-import sys
 import numpy as np
 import ZoneInteret as zi
 
 
+class algo_distance(algo.algorithme):
+    """
+    Cette classe hérite la classe algo pour implémenter les méthodes
+    Cette classe utilise l'algo de distance pour traiter la vidéo.
+    Cet algo compare la différence des pixels entre deux frames successives,
+    le nombre de changement est enregistré comme un indicateur de détection de stress
+    @version 2.0
+    """
 
-class algo_distance(algo.algorithme):  # hérite de la classe algo
+
     def get_nomAlgo(self):
         return "distance"
 
@@ -66,11 +73,3 @@ class algo_distance(algo.algorithme):  # hérite de la classe algo
 
         return ma_liste
 
-
-#if __name__ == '__main__':
-    #if len(sys.argv) != 2:
-        #print """
-            #USAGE: ./algo_distance.py coefflissage
-        #"""
-        #exit(1)
-    #test(int(sys.argv[1]))

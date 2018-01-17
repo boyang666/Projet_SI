@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- encoding: utf-8 -*-
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -7,9 +7,20 @@ import numpy as np
 import cv2
 import time
 
-# Gère l'affichage du resultat
 class affichage_graphique:
+    """
+        Cette class est utilisée pour gère l'affichage du resultat.
+        L'affichage se fait dans une nouvelle fenêtre créée par matplotlib.
+        Le résultat est une courbe avec un curseur.
+        En cliquant sur la courbe, en bas à gauche affichera l'image correspondante
+
+        @version 2.0
+    """
+
     def __init__(self, video, start_frame):
+        """
+            Le constructeur qui initiale la fenêtre d'affichage
+        """
         self.fig = plt.figure(figsize=(10, 8), dpi=80)
         self.gs = gridspec.GridSpec(2, 2)
         self.subplot1 = self.fig.add_subplot(self.gs[0, :])
@@ -31,26 +42,35 @@ class affichage_graphique:
 
         self.cap.release()
 
-    # Gère l'événement du click de souris
-    def __onclick(self, event):
-        x = int(float(event.xdata))
 
-        subplot2 = self.fig.add_subplot(self.gs[1, 0])
+    def __onclick(self, event):
+        """
+        Gère l'événement du click de souris
+
+        :param event: évènement
+        :return:
+        """
+
+        x = int(float(event.xdata))
         plt.title("Image correspondante :")
-        #print(len(self.frame_list))
         plt.imshow(cv2.cvtColor(self.frame_list[x], cv2.COLOR_BGR2RGB))
         plt.axis("off")
         self.fig.canvas.draw()
 
-    # Dessine la courbe de résultats
+
     def afficher(self, ma_liste):
+        """
+        Dessine la courbe de résultats
+
+        :param ma_liste: list de résultat fournis par l'algo de calcul
+        :return:
+        """
         # Variables utiles
         x = np.array(range(len(ma_liste)))
         y = np.array(ma_liste)
         y_max = max(y)
         y_min = min(y)
         y_mean = np.mean(y)
-        #localtime = time.asctime(time.localtime(time.time()))
         localtime = time.localtime(time.time())
         localtime_str = str(localtime.tm_year)+'_'+str(localtime.tm_mon)+'_'+ str(localtime.tm_mday)+'_'+str(localtime.tm_hour)+'h'+str(localtime.tm_min)+'m'+str(localtime.tm_sec)+'s'
         # Initialisation du graphique
