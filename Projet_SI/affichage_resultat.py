@@ -52,6 +52,7 @@ class affichage_graphique:
         """
 
         x = int(float(event.xdata))
+        subplot2 = self.fig.add_subplot(self.gs[1, 0])
         plt.title("Image correspondante :")
         plt.imshow(cv2.cvtColor(self.frame_list[x], cv2.COLOR_BGR2RGB))
         plt.axis("off")
