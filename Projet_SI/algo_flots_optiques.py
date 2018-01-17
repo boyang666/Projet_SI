@@ -6,14 +6,19 @@ import algo
 
 
 class flot_optiques(algo.algorithme):
+    /*Retourner le nom de algoritheme*/
     def get_nomAlgo(self):
         return "Flot optiques"
-
+    /*La fonction principale pour traiter la video avec Flot Optique*/
     def traiterVideo(self, video, start_frame):
+        
         ma_liste = list()
         cap = cv2.VideoCapture(video)
+        
+        //Params pour ShiTomasi corner detection
         feature_params = dict(maxCorners=100, qualityLevel=0.3,
                               minDistance=7, blockSize=7)
+        //Parameters pour lucas kanade flot optique
         lk_params = dict(winSize=(15, 15), maxLevel=2,
                          criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
@@ -40,14 +45,18 @@ class flot_optiques(algo.algorithme):
             #ret, frame = cap.read()
             if ret:
                 frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
+                //calculer optical flow
                 p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
                 if p1 is None:
                     break
+                    
+                //Selectionner les bons points
                 good_new = p1[st == 1]
                 good_old = p0[st == 1]
 
                 norme = 0
+                
+                //Faire le dessin de mouvement de flot optique
                 for i, (new, old) in enumerate(zip(good_new, good_old)):
                     a, b = new.ravel()
                     c, d = old.ravel()
@@ -64,6 +73,7 @@ class flot_optiques(algo.algorithme):
                 if k == 27:
                     break
 
+                //Mise a jours le frame actuel
                 old_gray = frame_gray.copy()
                 p0 = good_new.reshape(-1, 1, 2)
 
